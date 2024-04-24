@@ -79,7 +79,7 @@ char JDY_dbg_strbuf[JAY_MAX_AT_SIZE] = { 0U };
 JDY_StateDef test = JDY_ERR;
 
 /**
- * @brief ÖĞ¶Ï´¦Àíº¯Êı£¬·ÅÔÚble´®¿Ú½ÓÊÕÍê³ÉÖĞ¶ÏÖĞÖ´ĞĞ
+ * @brief ä¸­æ–­å¤„ç†å‡½æ•°ï¼Œæ”¾åœ¨bleä¸²å£æ¥æ”¶å®Œæˆä¸­æ–­ä¸­æ‰§è¡Œ
  */
 void jdy_it_ble_handle(void)
 {
@@ -88,13 +88,13 @@ void jdy_it_ble_handle(void)
         memset((char*) JDY_recvDATA, 0, strlen(JDY_recvDATA));
         strcpy((char*) JDY_recvDATA, (const char*) ble_datarev_buff);
 
-        // ±êÖ¾Î»
+        // æ ‡å¿—ä½
         JDY.state = JDY_datahandling;
     }
     return;
 }
 /**
- * @brief ÖĞ¶Ï´¦Àíº¯Êı£¬·ÅÔÚdbg´®¿Ú½ÓÊÕÍê³ÉÖĞ¶ÏÖĞÖ´ĞĞ
+ * @brief ä¸­æ–­å¤„ç†å‡½æ•°ï¼Œæ”¾åœ¨dbgä¸²å£æ¥æ”¶å®Œæˆä¸­æ–­ä¸­æ‰§è¡Œ
  */
 void jdy_it_dbg_handle(void)
 {
@@ -104,7 +104,7 @@ void jdy_it_dbg_handle(void)
         {
             strcpy(JDY_dbg_strbuf, (char*) dbg_datarev_buff);
 
-            // ±êÖ¾Î»
+            // æ ‡å¿—ä½
             JDY.dbgflag = 1U;
         }
     }
@@ -113,11 +113,11 @@ void jdy_it_dbg_handle(void)
 
 
 /**
- * @brief ½ö·¢ËÍ AT ÉèÖÃÖ¸Áî
- *  ----- ·¢ËÍ AT+cmdin+param+½áÊø·û
- *  ----- Ò»¶¨½ÓÊÕµ½ OK ²ÅËã³É¹¦
- * @param cmdin Ö¸Áî
- * @param Param ²ÎÊı²»ÄÜÎª ¿Õ »òÕß "\0" £¬±ØĞëÓĞÖµ
+ * @brief ä»…å‘é€ AT è®¾ç½®æŒ‡ä»¤
+ *  ----- å‘é€ AT+cmdin+param+ç»“æŸç¬¦
+ *  ----- ä¸€å®šæ¥æ”¶åˆ° OK æ‰ç®—æˆåŠŸ
+ * @param cmdin æŒ‡ä»¤
+ * @param Param å‚æ•°ä¸èƒ½ä¸º ç©º æˆ–è€… "\0" ï¼Œå¿…é¡»æœ‰å€¼
  * @return JDY_StateDef
  */
 JDY_StateDef __jdy_AT_CMD(const char* cmdin, const char* param)
@@ -129,13 +129,13 @@ JDY_StateDef __jdy_AT_CMD(const char* cmdin, const char* param)
         return JDY_Waitting;
     }
 
-    // ¿ªÆôÀ¶ÑÀ´®¿Ú½ÓÊÕ
+    // å¼€å¯è“ç‰™ä¸²å£æ¥æ”¶
     ble_recv_start_DMA();
 
-    // ×´Ì¬»ú
+    // çŠ¶æ€æœº
     JDY.state = JDY_listening;
 
-    // Êı¾İÔ¤´¦Àí   
+    // æ•°æ®é¢„å¤„ç†   
     strcpy(JDY_tx_AT_DATA, JDY.cmd.AT); // "AT"    
     if (cmdin != JDY.cmd.AT)
     {
@@ -147,26 +147,26 @@ JDY_StateDef __jdy_AT_CMD(const char* cmdin, const char* param)
     }
     strcat(JDY_tx_AT_DATA, JDY.cmd.over); // "\r\n"
 
-    // À¶ÑÀ´®¿Ú·¢ËÍ 
+    // è“ç‰™ä¸²å£å‘é€ 
     // dbg_send((uint8_t*)JDY_tx_AT_DATA);
     ble_send((uint8_t*) JDY_tx_AT_DATA);
 
     k = HAL_GetTick();
 
-    // blocking ·½Ê½²éÑ¯×´Ì¬ or ³¬Ê±
+    // blocking æ–¹å¼æŸ¥è¯¢çŠ¶æ€ or è¶…æ—¶
     while (JDY.state == JDY_listening)
     {
-        // Ã»½ÓÊÕµ½Êı¾İ
+        // æ²¡æ¥æ”¶åˆ°æ•°æ®
         if ((HAL_GetTick() - k) > JDY_Listening_timeout)
         {
             JDY.state = JDY_idle;
             return JDY_TMOUT;
         }
     }
-    // ½ÓÊÕµ½Êı¾İÁË
+    // æ¥æ”¶åˆ°æ•°æ®äº†
     if (JDY.state == JDY_datahandling)
     {
-        // ºÍ "OK" ×÷±È½Ï
+        // å’Œ "OK" ä½œæ¯”è¾ƒ
         if ((strcmp((const char*) JDY_recvDATA, (const char*) "OK\r\n") == 0)
             || (strcmp((const char*) JDY_recvDATA, (const char*) "+OK\r\n") == 0))
         {
@@ -185,11 +185,11 @@ JDY_StateDef __jdy_AT_OKcheck(void)
 
 
 /**
- * @brief AT ²éÑ¯Ö¸Áî
- * @param cmdin Ö¸Áî
- * @param param ·µ»ØµÄ²ÎÊı, char ĞÍ£¬Çë¸ù¾İĞèÒªµÄÀàĞÍ£¬½«Æä×ª»»ºóÔÙÊ¹ÓÃ¡£
- *              (ÓĞbug£¬¿ÉÄÜ»áÒç³ö£¬Ê¹ÓÃÊ±È·ÈÏºÃ×Ö·û´®³¤¶È£¬»òÕßÊ¹ÓÃ__jdy_AT_Query_return_char()º¯Êı)
- * @param paramlen param µÄ³¤¶È£¬ paramlen = sizeof() °üº¬ÁË½áÎ²µÄ'\0'
+ * @brief AT æŸ¥è¯¢æŒ‡ä»¤
+ * @param cmdin æŒ‡ä»¤
+ * @param param è¿”å›çš„å‚æ•°, char å‹ï¼Œè¯·æ ¹æ®éœ€è¦çš„ç±»å‹ï¼Œå°†å…¶è½¬æ¢åå†ä½¿ç”¨ã€‚
+ *              (æœ‰bugï¼Œå¯èƒ½ä¼šæº¢å‡ºï¼Œä½¿ç”¨æ—¶ç¡®è®¤å¥½å­—ç¬¦ä¸²é•¿åº¦ï¼Œæˆ–è€…ä½¿ç”¨__jdy_AT_Query_return_char()å‡½æ•°)
+ * @param paramlen param çš„é•¿åº¦ï¼Œ paramlen = sizeof() åŒ…å«äº†ç»“å°¾çš„'\0'
  * @return JDY_StateDef
  */
 JDY_StateDef __jdy_AT_Query(const char* cmdin, char* param, size_t paramlen)
@@ -197,7 +197,7 @@ JDY_StateDef __jdy_AT_Query(const char* cmdin, char* param, size_t paramlen)
     uint32_t k = 0U;
     char  cmdBuff[JAY_MAX_AT_SIZE] = { 0U };
     char  cmdBuff2[JAY_MAX_AT_SIZE] = { 0U };
-    char  paramBuff[JAY_MAX_Para_SIZE] = { 0U };    // paramlen = sizeof() °üº¬ÁË½áÎ²µÄ'\0'
+    char  paramBuff[JAY_MAX_Para_SIZE] = { 0U };    // paramlen = sizeof() åŒ…å«äº†ç»“å°¾çš„'\0'
     // char  recvBuff[JAY_MAX_Recv_SIZE] = { 0U };
 
     if (JDY.state != JDY_idle)
@@ -205,60 +205,60 @@ JDY_StateDef __jdy_AT_Query(const char* cmdin, char* param, size_t paramlen)
         return JDY_Waitting;
     }
 
-    // paramlen = sizeof() °üº¬ÁË½áÎ²µÄ'\0'
+    // paramlen = sizeof() åŒ…å«äº†ç»“å°¾çš„'\0'
     if (paramlen > JAY_MAX_Para_SIZE)
     {
         return JDY_ERR;
     }
 
-    // ¿ªÆôÀ¶ÑÀ´®¿Ú½ÓÊÕ
+    // å¼€å¯è“ç‰™ä¸²å£æ¥æ”¶
     ble_recv_start_DMA();
 
-    // ×´Ì¬»ú
+    // çŠ¶æ€æœº
     JDY.state = JDY_listening;
 
-    // Êı¾İÔ¤´¦Àí   
-    // strcpyÓĞÇåÁãµÄĞ§¹û
+    // æ•°æ®é¢„å¤„ç†   
+    // strcpyæœ‰æ¸…é›¶çš„æ•ˆæœ
     strcpy(JDY_tx_AT_DATA, JDY.cmd.AT); // "AT"
     strcat(JDY_tx_AT_DATA, JDY.cmd.add);// "+"
     strcat(JDY_tx_AT_DATA, cmdin);      // "cmdin"
     strcat(JDY_tx_AT_DATA, JDY.cmd.over); // "\r\n"
 
-    // À¶ÑÀ´®¿Ú·¢ËÍ 
+    // è“ç‰™ä¸²å£å‘é€ 
     // dbg_send((uint8_t*) JDY_tx_AT_DATA);
     ble_send((uint8_t*) JDY_tx_AT_DATA);
 
     k = HAL_GetTick();
 
-    // blocking ·½Ê½²éÑ¯×´Ì¬ or ³¬Ê±
+    // blocking æ–¹å¼æŸ¥è¯¢çŠ¶æ€ or è¶…æ—¶
     while (JDY.state == JDY_listening)
     {
-        // Ã»½ÓÊÕµ½Êı¾İ
+        // æ²¡æ¥æ”¶åˆ°æ•°æ®
         if ((HAL_GetTick() - k) > JDY_Listening_timeout)
         {
             JDY.state = JDY_idle;
             return JDY_TMOUT;
         }
     }
-    // ½ÓÊÕµ½Êı¾İÁË
+    // æ¥æ”¶åˆ°æ•°æ®äº†
     if (JDY.state == JDY_datahandling)
     {
-        // strcpyÓĞÇåÁãµÄĞ§¹û
+        // strcpyæœ‰æ¸…é›¶çš„æ•ˆæœ
         strcpy(cmdBuff, JDY.cmd.add); //"+"
         strcat(cmdBuff, cmdin);// "cmdin"
         strcat(cmdBuff, JDY.cmd.equ);// "="
         k = strlen(cmdBuff);
 
-        // strncpy ¸´ÖÆÇ°k¸ö×Ö·û
+        // strncpy å¤åˆ¶å‰kä¸ªå­—ç¬¦
         strncpy(cmdBuff2, JDY_recvDATA, k); //""
 
-        // ×÷±È½Ï
+        // ä½œæ¯”è¾ƒ
         if (strcmp((const char*) cmdBuff, (const char*) cmdBuff2) == 0)
         {
-            // strncpy ¸´ÖÆµÚ k+1 ¸öµ½µÚ paramlen-1 ¸ö×Ö·û £¬Í¬Ê±È¥µôÁË "\r\n"
+            // strncpy å¤åˆ¶ç¬¬ k+1 ä¸ªåˆ°ç¬¬ paramlen-1 ä¸ªå­—ç¬¦ ï¼ŒåŒæ—¶å»æ‰äº† "\r\n"
             strncpy(paramBuff, JDY_recvDATA + k, paramlen - 1);
 
-            // paramBuff µÄ´æÔÚ£¬È·±£ÁË param ²»»á³ö´í
+            // paramBuff çš„å­˜åœ¨ï¼Œç¡®ä¿äº† param ä¸ä¼šå‡ºé”™
             strcpy(param, paramBuff);
 
             JDY.state = JDY_idle;
@@ -271,9 +271,9 @@ JDY_StateDef __jdy_AT_Query(const char* cmdin, char* param, size_t paramlen)
 
 
 /**
- * @brief AT²éÑ¯Ö¸Áî
- * @param cmdin Ö¸Áî£¬ÀıÈç´«Èë JDY.cmd.POWR
- * @param num ²ÎÊı£¬±»ĞŞ¸ÄµÄÖµ ÀıÈç JDY.POWR
+ * @brief ATæŸ¥è¯¢æŒ‡ä»¤
+ * @param cmdin æŒ‡ä»¤ï¼Œä¾‹å¦‚ä¼ å…¥ JDY.cmd.POWR
+ * @param num å‚æ•°ï¼Œè¢«ä¿®æ”¹çš„å€¼ ä¾‹å¦‚ JDY.POWR
  * @return JDY_StateDef
  */
 JDY_StateDef __jdy_AT_Query_with_enum(const char* cmdin, int* num)
@@ -283,7 +283,7 @@ JDY_StateDef __jdy_AT_Query_with_enum(const char* cmdin, int* num)
     JDY_StateDef state = JDY_ERR;
     // if (__jdy_AT_OKcheck() == JDY_OK)
     // {
-        // paramlen = sizeof() °üº¬ÁË½áÎ²µÄ'\0'
+        // paramlen = sizeof() åŒ…å«äº†ç»“å°¾çš„'\0'
     state = __jdy_AT_Query(cmdin, parabuf, (size_t) 2);
     numbuf = ((int) parabuf[0] - 0x30);   // ASCII   0~9   0x30~0x39
     *num = numbuf;
@@ -293,10 +293,10 @@ JDY_StateDef __jdy_AT_Query_with_enum(const char* cmdin, int* num)
 
 
 /**
- * @brief AT²éÑ¯Ö¸Áî
- * @param cmdin Ö¸Áî£¬ÀıÈç´«Èë JDY.cmd.NETID
- * @param c ²ÎÊı£¬±»ĞŞ¸ÄµÄÖµ ÀıÈç JDY.NETID
- * @param paramlen paramlen = sizeof(char[]) ÏŞÖÆcµÄ³¤¶È °üº¬ÁË½áÎ²µÄ'\0'
+ * @brief ATæŸ¥è¯¢æŒ‡ä»¤
+ * @param cmdin æŒ‡ä»¤ï¼Œä¾‹å¦‚ä¼ å…¥ JDY.cmd.NETID
+ * @param c å‚æ•°ï¼Œè¢«ä¿®æ”¹çš„å€¼ ä¾‹å¦‚ JDY.NETID
+ * @param paramlen paramlen = sizeof(char[]) é™åˆ¶cçš„é•¿åº¦ åŒ…å«äº†ç»“å°¾çš„'\0'
  * @return JDY_StateDef
  */
 JDY_StateDef __jdy_AT_Query_with_char(const char* cmdin, char* c, size_t paramlen)
@@ -308,8 +308,8 @@ JDY_StateDef __jdy_AT_Query_with_char(const char* cmdin, char* c, size_t paramle
 
 
 /**
- * @brief ²éÑ¯£¨¸üĞÂJDY½á¹¹Ìå£©
- * @param cmdin Ö¸Áî£¬ÀıÈç´«Èë JDY.POWR
+ * @brief æŸ¥è¯¢ï¼ˆæ›´æ–°JDYç»“æ„ä½“ï¼‰
+ * @param cmdin æŒ‡ä»¤ï¼Œä¾‹å¦‚ä¼ å…¥ JDY.POWR
  * @return
  */
 JDY_StateDef __jdy_AT_Query_Selectable(const char* cmdin)
@@ -318,8 +318,8 @@ JDY_StateDef __jdy_AT_Query_Selectable(const char* cmdin)
     char JDY_charbuf[JAY_MAX_Para_SIZE] = { 0U };
     JDY_StateDef  state = JDY_ERR;
 
-    // ½á¹¹Ìå³ÉÔ±£¬Ö»ÄÜÊ¹ÓÃ if-else ²»ÄÜÓÃ switch-case 
-    /******* enum ÀàĞÍ ********/
+    // ç»“æ„ä½“æˆå‘˜ï¼Œåªèƒ½ä½¿ç”¨ if-else ä¸èƒ½ç”¨ switch-case 
+    /******* enum ç±»å‹ ********/
     // POWR
     if (cmdin == JDY.cmd.POWR)
     {
@@ -363,7 +363,7 @@ JDY_StateDef __jdy_AT_Query_Selectable(const char* cmdin)
         JDY.ROLE = (_ROLE) JDY_enumbuf;
     }
 
-    /******* char* ÀàĞÍ ********/
+    /******* char* ç±»å‹ ********/
     // LADDR
     else if ((cmdin == JDY.cmd.LADDR))
     {
@@ -402,7 +402,7 @@ JDY_StateDef __jdy_AT_Query_Selectable(const char* cmdin)
     return state;
 }
 
-// len = sizeof(char[]) °üº¬½áÎ²µÄ'\0'
+// len = sizeof(char[]) åŒ…å«ç»“å°¾çš„'\0'
 void __jdy_StrCut(char* str, size_t len)
 {
     uint16_t i = 0U;
@@ -422,9 +422,9 @@ void __jdy_StrCut(char* str, size_t len)
 
 
 /**
- * @brief ·¢ËÍÖ¸Áî  ²¢²éÑ¯£¨¸üĞÂJDY½á¹¹Ìå£©
+ * @brief å‘é€æŒ‡ä»¤  å¹¶æŸ¥è¯¢ï¼ˆæ›´æ–°JDYç»“æ„ä½“ï¼‰
  * @param cmdin
- * @param param ²ÎÊı²»ÄÜÎª ¿Õ »òÕß "\0" £¬±ØĞëÓĞÖµ
+ * @param param å‚æ•°ä¸èƒ½ä¸º ç©º æˆ–è€… "\0" ï¼Œå¿…é¡»æœ‰å€¼
  * @return
  */
 JDY_StateDef jdy_SNED_and_EQUERY(const char* cmdin, const char* param)
@@ -432,7 +432,7 @@ JDY_StateDef jdy_SNED_and_EQUERY(const char* cmdin, const char* param)
     JDY_StateDef state = __jdy_AT_CMD(cmdin, param);
     if (state == JDY_OK && cmdin == JDY.cmd.DEFAULT)
     {
-        // ½«½á¹¹ÌåµÄÄÚ´æÇåÁã
+        // å°†ç»“æ„ä½“çš„å†…å­˜æ¸…é›¶
         memset(&JDY.isInited, 0, (size_t) (sizeof(JDY_Def) - sizeof(_JDY_CMD_TypeDef)));
         JDY.isInited = 0U;
         return state;
@@ -446,7 +446,7 @@ JDY_StateDef jdy_SNED_and_EQUERY(const char* cmdin, const char* param)
 
 
 /**
- * @brief ½ö·¢ËÍ AT ÉèÖÃÖ¸Áî
+ * @brief ä»…å‘é€ AT è®¾ç½®æŒ‡ä»¤
  */
 JDY_StateDef jdy_SEND_CMD(const char* cmdin, const char* param)
 {
@@ -460,7 +460,7 @@ JDY_StateDef jdy_SEND_CMD(const char* cmdin, const char* param)
 
 
 /**
- * @brief ·¢ËÍ mesh Êı¾İ
+ * @brief å‘é€ mesh æ•°æ®
  */
 JDY_StateDef jdy_SEND_MESH(const char* data)
 {
@@ -469,7 +469,7 @@ JDY_StateDef jdy_SEND_MESH(const char* data)
 
 
 /**
- * @brief  ½ö²éÑ¯£¨¸üĞÂJDY½á¹¹Ìå£©
+ * @brief  ä»…æŸ¥è¯¢ï¼ˆæ›´æ–°JDYç»“æ„ä½“ï¼‰
  */
 JDY_StateDef jdy_EQUERY(const char* cmdin)
 {
@@ -496,52 +496,52 @@ void jdy_init(void)
 
     if (__jdy_AT_OKcheck() == JDY_OK)
     {
-        /* ·¢ËÍÖ¸Áî  ²¢²éÑ¯£¨¸üĞÂJDY½á¹¹Ìå£©*/
-        jdy_SNED_and_EQUERY(JDY.cmd.ENLOG, "1");       // ÏÈ¿ªÆô´®¿Ú×´Ì¬ÏÔÊ¾
+        /* å‘é€æŒ‡ä»¤  å¹¶æŸ¥è¯¢ï¼ˆæ›´æ–°JDYç»“æ„ä½“ï¼‰*/
+        jdy_SNED_and_EQUERY(JDY.cmd.ENLOG, "1");       // å…ˆå¼€å¯ä¸²å£çŠ¶æ€æ˜¾ç¤º
         jdy_SNED_and_EQUERY(JDY.cmd.TYPE, "0");
         jdy_SNED_and_EQUERY(JDY.cmd.BAUD, "4");
         jdy_SNED_and_EQUERY(JDY.cmd.MCLSS, "0");
         jdy_SNED_and_EQUERY(JDY.cmd.ROLE, "5");
         jdy_SNED_and_EQUERY(JDY.cmd.POWR, "4");
-        // jdy_SNED_and_EQUERY(JDY.cmd.MADDR, "");  // ×¢ÊÍµô£¬±£³ÖÄ¬ÈÏµÄ MADDR
+        // jdy_SNED_and_EQUERY(JDY.cmd.MADDR, "");  // æ³¨é‡Šæ‰ï¼Œä¿æŒé»˜è®¤çš„ MADDR
         jdy_SNED_and_EQUERY(JDY.cmd.NETID, "1189");
         // jdy_SNED_and_EQUERY(JDY.cmd.NAME, "JDY-5M");
         // jdy_SNED_and_EQUERY(JDY.cmd.PIN, "1234");
-        // jdy_SNED_and_EQUERY(JDY.cmd.DEFAULT, '\0'); // ³ö³§ÉèÖÃ
+        // jdy_SNED_and_EQUERY(JDY.cmd.DEFAULT, '\0'); // å‡ºå‚è®¾ç½®
 
 
-        /* ½ö·¢ËÍÖ¸Áî £¨JDY½á¹¹Ìå´æ´¢Ö®ÍâµÄÃüÁî£© */
-        /*          ºÜ¶àÖ¸Áî¶¼¿ÉÒÔ·¢            */
+        /* ä»…å‘é€æŒ‡ä»¤ ï¼ˆJDYç»“æ„ä½“å­˜å‚¨ä¹‹å¤–çš„å‘½ä»¤ï¼‰ */
+        /*          å¾ˆå¤šæŒ‡ä»¤éƒ½å¯ä»¥å‘            */
         __jdy_AT_CMD(JDY.cmd.CLRFRIEND, '\0');
 
 
-        /* ½ö²éÑ¯£¨¸üĞÂJDY½á¹¹Ìå£©*/
+        /* ä»…æŸ¥è¯¢ï¼ˆæ›´æ–°JDYç»“æ„ä½“ï¼‰*/
         // __jdy_AT_Query_Selectable(JDY.cmd.ENLOG);
         // __jdy_AT_Query_Selectable(JDY.cmd.TYPE);
         // __jdy_AT_Query_Selectable(JDY.cmd.BAUD);
         // __jdy_AT_Query_Selectable(JDY.cmd.MCLSS);
         // __jdy_AT_Query_Selectable(JDY.cmd.ROLE);
         // __jdy_AT_Query_Selectable(JDY.cmd.POWR);
-        __jdy_AT_Query_Selectable(JDY.cmd.STAT);  // STAT Ö»ÄÜ±»²éÑ¯£¬²»ÄÜµ÷ÓÃ __jdy_AT_CMD()
-        __jdy_AT_Query_Selectable(JDY.cmd.LADDR);// LADDR Ö»ÄÜ±»²éÑ¯£¬²»ÄÜµ÷ÓÃ __jdy_AT_CMD()
+        __jdy_AT_Query_Selectable(JDY.cmd.STAT);  // STAT åªèƒ½è¢«æŸ¥è¯¢ï¼Œä¸èƒ½è°ƒç”¨ __jdy_AT_CMD()
+        __jdy_AT_Query_Selectable(JDY.cmd.LADDR);// LADDR åªèƒ½è¢«æŸ¥è¯¢ï¼Œä¸èƒ½è°ƒç”¨ __jdy_AT_CMD()
         __jdy_AT_Query_Selectable(JDY.cmd.MADDR);
         // __jdy_AT_Query_Selectable(JDY.cmd.NETID);
         __jdy_AT_Query_Selectable(JDY.cmd.NAME);
         __jdy_AT_Query_Selectable(JDY.cmd.PIN);
 
 
-        /* ½ö²éÑ¯Ö¸Áî £¨JDY½á¹¹Ìå´æ´¢Ö®ÍâµÄÃüÁî£© */
-        /*          ºÜ¶àÖ¸Áî¶¼¿ÉÒÔ·¢            */
+        /* ä»…æŸ¥è¯¢æŒ‡ä»¤ ï¼ˆJDYç»“æ„ä½“å­˜å‚¨ä¹‹å¤–çš„å‘½ä»¤ï¼‰ */
+        /*          å¾ˆå¤šæŒ‡ä»¤éƒ½å¯ä»¥å‘            */
         __jdy_AT_Query_with_char(JDY.cmd.VERSION, charbuf, sizeof(charbuf));
 
 
-        // ³õÊ¼»¯Íê³É±êÖ¾
+        // åˆå§‹åŒ–å®Œæˆæ ‡å¿—
         JDY.isInited = 1U;
     }
 }
 
 /**
- * @brief µ÷ÊÔÊ±ÓÃµÄ dbg´®¿Ú ·¢ËÍµ½ ble´®¿Ú
+ * @brief è°ƒè¯•æ—¶ç”¨çš„ dbgä¸²å£ å‘é€åˆ° bleä¸²å£
  */
 void jdy_loop(void)
 {
@@ -556,7 +556,7 @@ void jdy_loop(void)
             ble_send((uint8_t*) JDY_dbg_strbuf);
         }
 
-        // ´¦ÀíÍê³É
+        // å¤„ç†å®Œæˆ
         JDY.dbgflag = 0U;
     }
 }
