@@ -7,7 +7,7 @@
 #include "bsp_ble.h"
 #include "bsp_dbg.h"
 
-// Ö¸Áî¼¯ºÏ
+// æŒ‡ä»¤é›†åˆ
 typedef struct __JDY_CMD_TypeDef
 {
     char* OK;
@@ -71,7 +71,7 @@ typedef struct __JDY_CMD_TypeDef
 }_JDY_CMD_TypeDef;
 
 
-// ¹¤×÷Ä£Ê½ Ä¬ÈÏÊÇ5
+// å·¥ä½œæ¨¡å¼ é»˜è®¤æ˜¯5
 typedef enum __ROLE
 {
     Slave,
@@ -86,7 +86,7 @@ typedef enum __ROLE
     KeyTag
 }_ROLE;
 
-// ²¨ÌØÂÊ Ä¬ÈÏÊÇ4  (9600bps)
+// æ³¢ç‰¹ç‡ é»˜è®¤æ˜¯4  (9600bps)
 typedef enum __BAUD
 {
     B2400 = 2U,
@@ -98,7 +98,7 @@ typedef enum __BAUD
     B115200 = 8U
 }_BAUD;
 
-// ·¢Éä¹¦ÂÊ Ä¬ÈÏÊÇ4
+// å‘å°„åŠŸç‡ é»˜è®¤æ˜¯4
 typedef enum __POWR
 {
     n_15dbm,
@@ -108,9 +108,9 @@ typedef enum __POWR
     p_4dbm
 }_POWR;
 
-// ²éÑ¯--Á¬½Ó×´Ì¬
-// MESH×´Ì¬£¬Ö»ÓĞÔÚÍøÂçÄÚÓĞÖĞĞÄ»úµÄÇé¿öÏÂ²ÅÓĞĞ§£¬
-// ÌØ±ğËµÃ÷×éÍøÊıÁ¿¶àÊ±²»½¨ÒéÓÃ»§´ò¿ªÖĞĞÄ»ú»áÔì³ÉÍøÂç¸ººÉ
+// æŸ¥è¯¢--è¿æ¥çŠ¶æ€
+// MESHçŠ¶æ€ï¼Œåªæœ‰åœ¨ç½‘ç»œå†…æœ‰ä¸­å¿ƒæœºçš„æƒ…å†µä¸‹æ‰æœ‰æ•ˆï¼Œ
+// ç‰¹åˆ«è¯´æ˜ç»„ç½‘æ•°é‡å¤šæ—¶ä¸å»ºè®®ç”¨æˆ·æ‰“å¼€ä¸­å¿ƒæœºä¼šé€ æˆç½‘ç»œè´Ÿè·
 typedef enum __STAT
 {
     NotConnect,
@@ -119,21 +119,21 @@ typedef enum __STAT
     ConnectedAndNetted
 }_STAT;
 
-// ¿ª»úË¯Ãß»ò»½ĞÑ Ä¬ÈÏÊÇ1 Õâ¸ö²âÊÔ·¢ÏÖjdy-25m²»·´Ó¦£¬ÔİÊ±²»ÓÃ
+// å¼€æœºç¡çœ æˆ–å”¤é†’ é»˜è®¤æ˜¯1 è¿™ä¸ªæµ‹è¯•å‘ç°jdy-25mä¸ååº”ï¼Œæš‚æ—¶ä¸ç”¨
 typedef enum __STARTEN
 {
     sleep,
     weakup
 }_STARTEN;
 
-// ´®¿ÚÊä³ö×´Ì¬ Ä¬ÈÏÊÇ1
+// ä¸²å£è¾“å‡ºçŠ¶æ€ é»˜è®¤æ˜¯1
 typedef enum __ENLOG
 {
     off,
     on
 }_ENLOG;
 
-// ÊÇ·ñ´ò¿ªÃÜÂëÁ¬½Ó·½Ê½ Ä¬ÈÏÊÇ0
+// æ˜¯å¦æ‰“å¼€å¯†ç è¿æ¥æ–¹å¼ é»˜è®¤æ˜¯0
 typedef enum __TYPE
 {
     noPIN,
@@ -142,14 +142,14 @@ typedef enum __TYPE
 }_TYPE;
 
 
-// ×éÍøÉè±¸ÀàĞÍ Ä¬ÈÏÊÇ0£¨Â·ÓÉÆ÷£© 1(ÖÕ¶ËÉè±¸)
+// ç»„ç½‘è®¾å¤‡ç±»å‹ é»˜è®¤æ˜¯0ï¼ˆè·¯ç”±å™¨ï¼‰ 1(ç»ˆç«¯è®¾å¤‡)
 typedef enum __MCLSS
 {
-    Router,     //Â·ÓÉÆ÷£¨Ö§³ÖÖĞ¼Ì£©
-    Terminal    //ÖÕ¶ËÉè±¸£¨ÎŞÖĞ¼Ì£©
+    Router,     //è·¯ç”±å™¨ï¼ˆæ”¯æŒä¸­ç»§ï¼‰
+    Terminal    //ç»ˆç«¯è®¾å¤‡ï¼ˆæ— ä¸­ç»§ï¼‰
 }_MCLSS;
 
-// ´®¿Ú×´Ì¬»ú
+// ä¸²å£çŠ¶æ€æœº
 typedef enum __STATE
 {
     JDY_idle,
@@ -157,7 +157,7 @@ typedef enum __STATE
     JDY_datahandling
 }_STATE;
 
-// JDY¿âµÄ×´Ì¬·´À¡
+// JDYåº“çš„çŠ¶æ€åé¦ˆ
 typedef enum _JDY_StateDef
 {
     JDY_OK,
@@ -166,31 +166,31 @@ typedef enum _JDY_StateDef
     JDY_Waitting
 }JDY_StateDef;
 
-// JDY25Éè±¸
+// JDY25è®¾å¤‡
 typedef struct _JDY_DEVICE
 {
-    /******* ÌØÊâÓÃÍ¾ ********/
+    /******* ç‰¹æ®Šç”¨é€” ********/
     _JDY_CMD_TypeDef  cmd;
     char        isInited;
     char        dbgflag;
     _STATE      state;
 
-    /******* enum ÀàĞÍ ********/
-    _ENLOG      ENLOG;      //´®¿ÚÊä³ö×´Ì¬    
-    _TYPE       TYPE;       //ÊÇ·ñĞèÒªPIN
-    _BAUD       BAUD;       //²¨ÌØÂÊ        // Ä¬ÈÏ B9600
-    _MCLSS      MCLSS;      //×éÍøÉè±¸ÀàĞÍ
-    _ROLE       ROLE;       //¹¤×÷Ä£Ê½ÉèÖÃ
-    _POWR       POWR;       //·¢Éä¹¦ÂÊ
-    _STAT       STAT;       //¶ÁÈ¡Á¬½Ó×´Ì¬
+    /******* enum ç±»å‹ ********/
+    _ENLOG      ENLOG;      //ä¸²å£è¾“å‡ºçŠ¶æ€    
+    _TYPE       TYPE;       //æ˜¯å¦éœ€è¦PIN
+    _BAUD       BAUD;       //æ³¢ç‰¹ç‡        // é»˜è®¤ B9600
+    _MCLSS      MCLSS;      //ç»„ç½‘è®¾å¤‡ç±»å‹
+    _ROLE       ROLE;       //å·¥ä½œæ¨¡å¼è®¾ç½®
+    _POWR       POWR;       //å‘å°„åŠŸç‡
+    _STAT       STAT;       //è¯»å–è¿æ¥çŠ¶æ€
 
-    /******* char* ÀàĞÍ ********/
-    // Áô³öÒ»Î»ÓÃÓÚ ×Ö·û´® ĞÍÄ©Î²µÄ '\0'
-    char        LADDR[49];  //MACµØÖ·
-    char    	MADDR[5];   //¶ÌµØÖ·
-    char    	NETID[5];   //×éÍøID        // "1189"  
-    char        NAME[19];   //¹ã²¥Ãû³Æ      // "JDY-25M"
-    char        PIN[7];     //Á¬½ÓPIN       // "123456"
+    /******* char* ç±»å‹ ********/
+    // ç•™å‡ºä¸€ä½ç”¨äº å­—ç¬¦ä¸² å‹æœ«å°¾çš„ '\0'
+    char        LADDR[49];  //MACåœ°å€
+    char    	MADDR[5];   //çŸ­åœ°å€
+    char    	NETID[5];   //ç»„ç½‘ID        // "1189"  
+    char        NAME[19];   //å¹¿æ’­åç§°      // "JDY-25M"
+    char        PIN[7];     //è¿æ¥PIN       // "123456"
     
 }JDY_Def;
 
@@ -200,7 +200,7 @@ typedef struct _JDY_DEVICE
 #define JAY_MAX_AT_SIZE       ((uint16_t)49U)
 #define JAY_MAX_Para_SIZE     ((uint16_t)49U)
 #define JAY_MAX_Recv_SIZE     ble_MAX_datarev_buffsize
-#define JDY_Listening_timeout   ((uint32_t)3000U)   // ×î´ó³¬Ê±1000ms
+#define JDY_Listening_timeout   ((uint32_t)3000U)   // æœ€å¤§è¶…æ—¶1000ms
 
 
 extern JDY_Def JDY;
