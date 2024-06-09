@@ -66,8 +66,8 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-
+uint32_t    clk = 0x00000000;
+uint16_t    flag = 0x0000;
 /* USER CODE END 0 */
 
 /**
@@ -131,6 +131,14 @@ int main(void)
     Key_Loop();
     Led_Loop();
     jdy_loop();
+    if(flag==0x0001)
+    {
+      dbg_send((uint8_t*)"sleep");
+      Sys_Enter_Standby();
+      dbg_send((uint8_t*)"wake up");
+      flag=0x0000;
+      clk=0x00000000;
+    }
     // joy_loop();
       
 
@@ -192,7 +200,12 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void Sys_Enter_Standby(void){
+    __HAL_RCC_PWR_CLK_ENABLE();     //使能PWR时钟
+    __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);      //清除Wake_UP标志
+    HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);   //设置WAKEUP用于唤醒
+    HAL_PWR_EnterSTANDBYMode();     //进入待机模式
+}
 /* USER CODE END 4 */
 
 /**

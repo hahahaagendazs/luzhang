@@ -8,14 +8,16 @@
 
 
 
-uint16_t    key_time = 0x0000;
+uint32_t    key_time = 0x00000000;
+extern uint32_t    clk ;
+extern uint16_t    flag;
 key_status  key_s = key_idle;
 
 void timeout(void)
 {
     key_time += 1;
-    // 超时 120ms 之内只能被按一次 防止出错 主频32MHz 
-    if(key_time >= 0x0FFF)
+    // 超时 20ms 之内只能被按一次 防止出错 主频32MHz 
+    if(key_time >= 0x00013880)
     {
         key_s = key_idle;
         key_time = 0x0000;
@@ -71,11 +73,11 @@ void Key_Loop(void)
             dbg_send_DMA((uint8_t*)"/down");
         }
 
-        else if (Key_Scan(KEY_LEFT_GPIO_Port, KEY_LEFT_Pin) == KEY_ON)
-        {
-            key_s = key_pressed;
-            dbg_send_DMA((uint8_t*)"/Left");
-        }
+//        else if (Key_Scan(KEY_LEFT_GPIO_Port, KEY_LEFT_Pin) == KEY_ON)
+//        {
+//            key_s = key_pressed;
+//            dbg_send_DMA((uint8_t*)"/Left");
+//        }
 
         else if (Key_Scan(KEY_RIGHT_GPIO_Port, KEY_RIGHT_Pin) == KEY_ON)
         {
@@ -164,6 +166,14 @@ void Key_Loop(void)
         {
             key_s = key_pressed;
             dbg_send_DMA((uint8_t*)"/R2");
+        }
+        else
+        {
+            clk+=1;
+            if(clk>=0x000000FF)
+            {
+                flag=0x0001;
+            }
         }
     }
     else if (key_s == key_pressed)

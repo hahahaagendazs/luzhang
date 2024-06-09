@@ -61,9 +61,9 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin PAPin PAPin
-                           PAPin PAPin PAPin */
-  GPIO_InitStruct.Pin = KEY_LEFT_Pin|KEY_SELECT_Pin|KEY_L3_Pin|KEY_R3_Pin
-                          |KEY_START_Pin|KEY_R2_Pin|KEY_R1_Pin;
+                           PAPin PAPin */
+  GPIO_InitStruct.Pin = KEY_SELECT_Pin|KEY_L3_Pin|KEY_R3_Pin|KEY_START_Pin
+                          |KEY_R2_Pin|KEY_R1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
